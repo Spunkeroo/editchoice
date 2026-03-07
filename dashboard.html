@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Business Dashboard — EditChoice</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06060a;--card:#12121e;--border:#1e1e30;--accent:#a855f7;--accent2:#9333ea;--text:#e8e8f0;--muted:#7878a0;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+.auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;max-width:400px;width:100%;text-align:center}
+.auth-box h1{font-size:1.5rem;margin-bottom:8px}
+.auth-box p{color:var(--muted);font-size:.9rem;margin-bottom:24px}
+.auth-box .logo{font-size:1.6rem;font-weight:900;color:var(--accent);margin-bottom:16px}
+.auth-box .logo span{color:var(--text)}
+.auth-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--bg);border-radius:8px;padding:4px}
+.auth-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.85rem;cursor:pointer;border-radius:6px;font-family:inherit}
+.auth-tab.active{background:var(--accent);color:#fff}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-form input,.auth-form select{padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit}
+.auth-form input:focus,.auth-form select:focus{outline:none;border-color:var(--accent)}
+.auth-btn{padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:800;font-size:1rem;cursor:pointer;font-family:inherit}
+.auth-btn:hover{background:var(--accent2)}
+.auth-msg{font-size:.8rem;color:var(--red);margin-top:8px;min-height:20px}
+.dashboard{display:none}
+.dash-nav{position:sticky;top:0;z-index:100;background:rgba(6,6,10,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px}
+.dash-nav-inner{max-width:1200px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between}
+.dash-logo{font-weight:900;font-size:1.3rem;color:var(--accent)}
+.dash-logo span{color:var(--text)}
+.dash-user{display:flex;align-items:center;gap:10px}
+.dash-user-name{font-size:.85rem;font-weight:600}
+.dash-user-plan{font-size:.7rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:50px;font-weight:700}
+.dash-logout{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:.8rem;cursor:pointer;font-family:inherit}
+.dash-logout:hover{border-color:var(--red);color:var(--red)}
+.dash-body{max-width:1200px;margin:0 auto;padding:20px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+.dash-sidebar{display:flex;flex-direction:column;gap:4px}
+.sidebar-link{padding:10px 14px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;color:var(--muted);border:none;background:none;text-align:left;font-family:inherit;width:100%}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(168,85,247,.1);color:var(--accent)}
+.sidebar-link .icon{font-size:1.1rem}
+.dash-content{min-height:70vh}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-size:1.4rem;font-weight:900;margin-bottom:4px}
+.panel-sub{color:var(--muted);font-size:.88rem;margin-bottom:24px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.stat-label{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{font-size:1.8rem;font-weight:900;margin-top:4px}
+.stat-change{font-size:.75rem;font-weight:600;margin-top:2px}
+.stat-change.up{color:var(--accent)}
+.stat-change.down{color:var(--red)}
+.dash-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.dash-table th{text-align:left;padding:12px 16px;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg)}
+.dash-table td{padding:12px 16px;font-size:.85rem;border-bottom:1px solid var(--border)}
+.dash-table tr:last-child td{border-bottom:none}
+.dash-table tr:hover td{background:rgba(255,255,255,.02)}
+.btn-sm{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-size:.75rem;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid .full{grid-column:1/-1}
+.form-grid label{font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600}
+.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit}
+.form-grid textarea{min-height:80px;resize:vertical}
+.form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus{outline:none;border-color:var(--accent)}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.plan-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s}
+.plan-card:hover,.plan-card.current{border-color:var(--accent)}
+.plan-card.current{background:rgba(168,85,247,.05)}
+.plan-name{font-size:.8rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:1px}
+.plan-price{font-size:2rem;font-weight:900;margin:8px 0}
+.plan-price sub{font-size:.8rem;color:var(--muted)}
+.plan-feat{font-size:.8rem;color:var(--muted);margin:4px 0}
+.plan-btn{margin-top:12px;padding:8px 16px;border:2px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;width:100%}
+.plan-card.current .plan-btn{background:var(--accent);color:#fff}
+.template-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px}
+.template-card h4{margin-bottom:8px;font-size:.95rem}
+.template-body{background:var(--bg);border-radius:8px;padding:14px;font-size:.82rem;color:var(--muted);white-space:pre-wrap;line-height:1.7;margin-bottom:10px}
+.copy-btn{padding:6px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit}
+.ad-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;padding:12px 20px;border-radius:8px;font-weight:700;font-size:.85rem;transform:translateY(100px);opacity:0;transition:all .3s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+@media(max-width:768px){
+.dash-body{grid-template-columns:1fr}
+.dash-sidebar{flex-direction:row;overflow-x:auto;gap:2px;padding-bottom:8px}
+.sidebar-link{white-space:nowrap;padding:8px 12px;font-size:.78rem}
+.sidebar-link .icon{display:none}
+.form-grid{grid-template-columns:1fr}
+.stat-row{grid-template-columns:1fr 1fr}
+.plan-grid{grid-template-columns:1fr}
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GVNL11PEGP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-GVNL11PEGP');</script>
+<script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script","pn0x1z2y3w");</script>
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<div class="auth-screen" id="authScreen">
+<div class="auth-box">
+<div class="logo">Edit<span>Choice</span></div>
+<h1>Vendor Dashboard</h1>
+<p>Manage your software listing, track analytics, and grow your user base</p>
+<div class="auth-tabs">
+<button class="auth-tab active" onclick="switchAuth('login',event)">Log In</button>
+<button class="auth-tab" onclick="switchAuth('signup',event)">Sign Up</button>
+</div>
+<form class="auth-form" id="loginForm" onsubmit="handleAuth(event,'login')">
+<input type="email" name="email" placeholder="Email address" required>
+<input type="password" name="password" placeholder="Password" required>
+<button class="auth-btn" type="submit">Log In</button>
+</form>
+<form class="auth-form" id="signupForm" style="display:none" onsubmit="handleAuth(event,'signup')">
+<input type="text" name="business" placeholder="Software / Company name" required>
+<input type="email" name="email" placeholder="Email address" required>
+<input type="password" name="password" placeholder="Create password (6+ chars)" required minlength="6">
+<select name="category" required>
+<option value="">Select category</option>
+<option>Video Editing</option>
+<option>Photo Editing</option>
+<option>Audio Production</option>
+<option>Graphic Design</option>
+<option>AI Tools</option>
+<option>Code Editors</option>
+<option>3D Modeling</option>
+<option>Screen Recording</option>
+<option>Animation</option>
+<option>Color Grading</option>
+</select>
+<input type="url" name="website" placeholder="Website URL">
+<button class="auth-btn" type="submit">Create Account</button>
+</form>
+<div class="auth-msg" id="authMsg"></div>
+</div>
+</div>
+
+<div class="dashboard" id="dashboard">
+<nav class="dash-nav">
+<div class="dash-nav-inner">
+<a href="/" class="dash-logo">Edit<span>Choice</span></a>
+<div class="dash-user">
+<span class="dash-user-name" id="userName">Software</span>
+<span class="dash-user-plan" id="userPlan">FREE</span>
+<button class="dash-logout" onclick="logout()">Log Out</button>
+</div>
+</div>
+</nav>
+
+<div class="dash-body">
+<div class="dash-sidebar">
+<button class="sidebar-link active" onclick="showPanel('overview',event)"><span class="icon">📊</span> Overview</button>
+<button class="sidebar-link" onclick="showPanel('analytics',event)"><span class="icon">📈</span> Analytics</button>
+<button class="sidebar-link" onclick="showPanel('profile',event)"><span class="icon">🏢</span> Profile</button>
+<button class="sidebar-link" onclick="showPanel('reviews',event)"><span class="icon">⭐</span> Reviews</button>
+<button class="sidebar-link" onclick="showPanel('compare',event)"><span class="icon">⚖️</span> Compare</button>
+<button class="sidebar-link" onclick="showPanel('advertise',event)"><span class="icon">📢</span> Advertise</button>
+<button class="sidebar-link" onclick="showPanel('billing',event)"><span class="icon">💳</span> Billing</button>
+<button class="sidebar-link" onclick="showPanel('tools',event)"><span class="icon">🔧</span> Tools</button>
+</div>
+
+<div class="dash-content">
+
+<div class="panel active" id="panel-overview">
+<h2 class="panel-title">Dashboard Overview</h2>
+<p class="panel-sub">Your software listing performance at a glance</p>
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">Listing Views</div><div class="stat-value" id="statViews">0</div><div class="stat-change up">+18% this week</div></div>
+<div class="stat-card"><div class="stat-label">Click-Throughs</div><div class="stat-value" id="statClicks">0</div><div class="stat-change up">+7 this week</div></div>
+<div class="stat-card"><div class="stat-label">Avg Rating</div><div class="stat-value" id="statRating">-</div><div class="stat-change">No reviews yet</div></div>
+<div class="stat-card"><div class="stat-label">Category Rank</div><div class="stat-value" id="statRank">#-</div><div class="stat-change up">In your category</div></div>
+</div>
+<h3 style="margin-bottom:12px;font-size:1rem">Recent Activity</h3>
+<table class="dash-table">
+<thead><tr><th>Event</th><th>Source</th><th>Date</th><th>Details</th></tr></thead>
+<tbody id="recentActivity">
+<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:30px">No activity yet. Upgrade your plan to track detailed analytics.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="panel" id="panel-analytics">
+<h2 class="panel-title">Analytics</h2>
+<p class="panel-sub">Track how users discover and interact with your listing</p>
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">Total Views (30d)</div><div class="stat-value">0</div></div>
+<div class="stat-card"><div class="stat-label">Click-Through Rate</div><div class="stat-value">0%</div></div>
+<div class="stat-card"><div class="stat-label">Comparison Appearances</div><div class="stat-value">0</div></div>
+<div class="stat-card"><div class="stat-label">Search Impressions</div><div class="stat-value">0</div></div>
+</div>
+<div class="form-card">
+<h4 style="margin-bottom:12px">Traffic Sources</h4>
+<div style="text-align:center;color:var(--muted);padding:40px">Upgrade to Pro or higher to unlock detailed analytics with traffic sources, user demographics, and conversion tracking.</div>
+</div>
+</div>
+
+<div class="panel" id="panel-profile">
+<h2 class="panel-title">Software Profile</h2>
+<p class="panel-sub">Keep your listing complete and accurate for better visibility</p>
+<div class="form-card">
+<div class="form-grid" id="profileForm">
+<div><label>Software Name</label><input type="text" id="pBusiness" placeholder="Your software name"></div>
+<div><label>Company / Developer</label><input type="text" id="pCompany" placeholder="Company name"></div>
+<div><label>Email</label><input type="email" id="pEmail" placeholder="contact@software.com"></div>
+<div><label>Website</label><input type="url" id="pWebsite" placeholder="https://yoursoftware.com"></div>
+<div><label>Pricing Model</label>
+<select id="pPricing"><option>Free</option><option>Freemium</option><option>One-Time Purchase</option><option>Subscription</option><option>Enterprise</option></select></div>
+<div><label>Starting Price</label><input type="text" id="pPrice" placeholder="$0 / $9.99/mo"></div>
+<div class="full"><label>Supported Platforms</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px" id="platformChecks">
+<label style="display:flex;align-items:center;gap:4px;font-size:.82rem;color:var(--text);cursor:pointer"><input type="checkbox" value="Windows"> Windows</label>
+<label style="display:flex;align-items:center;gap:4px;font-size:.82rem;color:var(--text);cursor:pointer"><input type="checkbox" value="macOS"> macOS</label>
+<label style="display:flex;align-items:center;gap:4px;font-size:.82rem;color:var(--text);cursor:pointer"><input type="checkbox" value="Linux"> Linux</label>
+<label style="display:flex;align-items:center;gap:4px;font-size:.82rem;color:var(--text);cursor:pointer"><input type="checkbox" value="Web"> Web</label>
+<label style="display:flex;align-items:center;gap:4px;font-size:.82rem;color:var(--text);cursor:pointer"><input type="checkbox" value="iOS"> iOS</label>
+<label style="display:flex;align-items:center;gap:4px;font-size:.82rem;color:var(--text);cursor:pointer"><input type="checkbox" value="Android"> Android</label>
+</div></div>
+<div class="full"><label>Key Features (comma separated)</label><input type="text" id="pFeatures" placeholder="4K export, AI tools, timeline editing, color grading..."></div>
+<div><label>Demo URL</label><input type="url" id="pDemo" placeholder="https://yoursoftware.com/demo"></div>
+<div><label>Screenshots URL</label><input type="url" id="pScreenshots" placeholder="Link to screenshots"></div>
+<div class="full"><label>Description</label><textarea id="pDesc" placeholder="Describe your software, its unique features, target audience, and what makes it stand out..."></textarea></div>
+<div><label>System Requirements</label><input type="text" id="pSysReq" placeholder="8GB RAM, GPU recommended"></div>
+<div><label>Year Released</label><input type="number" id="pYear" placeholder="e.g. 2024"></div>
+<div class="full"><button class="auth-btn" onclick="saveProfile()" style="width:100%">Save Profile</button></div>
+</div>
+</div>
+<div style="margin-top:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+<h4 style="margin-bottom:8px">Profile Completeness</h4>
+<div style="background:var(--bg);border-radius:8px;height:12px;overflow:hidden"><div id="profileBar" style="width:20%;height:100%;background:var(--accent);border-radius:8px;transition:width .3s"></div></div>
+<p style="font-size:.78rem;color:var(--muted);margin-top:6px">Complete profiles get 4x more clicks. Fill in all fields above.</p>
+</div>
+</div>
+
+<div class="panel" id="panel-reviews">
+<h2 class="panel-title">Reviews & Ratings</h2>
+<p class="panel-sub">Manage user reviews and request feedback</p>
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">Average Rating</div><div class="stat-value">-</div></div>
+<div class="stat-card"><div class="stat-label">Total Reviews</div><div class="stat-value">0</div></div>
+<div class="stat-card"><div class="stat-label">5-Star Reviews</div><div class="stat-value">0</div></div>
+</div>
+<div class="form-card">
+<h4 style="margin-bottom:12px">Request a Review</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Send your users a link to review your software on EditChoice.</p>
+<div class="form-grid">
+<div><label>User Name</label><input type="text" id="revName" placeholder="John Smith"></div>
+<div><label>User Email</label><input type="email" id="revEmail" placeholder="john@email.com"></div>
+<div class="full"><button class="auth-btn" onclick="requestReview()" style="width:100%">Send Review Request</button></div>
+</div>
+</div>
+<div style="margin-top:16px;text-align:center;color:var(--muted);padding:30px;background:var(--card);border:1px solid var(--border);border-radius:12px">No reviews yet. Request reviews from your users above.</div>
+</div>
+
+<div class="panel" id="panel-compare">
+<h2 class="panel-title">Competitive Comparison</h2>
+<p class="panel-sub">See how your software ranks against competitors in your category</p>
+<div class="form-card">
+<h4 style="margin-bottom:12px">Your Comparison Stats</h4>
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">Times Compared</div><div class="stat-value">0</div></div>
+<div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value">-</div></div>
+<div class="stat-card"><div class="stat-label">Top Competitor</div><div class="stat-value" style="font-size:1rem">-</div></div>
+</div>
+<div style="text-align:center;color:var(--muted);padding:30px">
+<p style="margin-bottom:12px">Upgrade to see detailed comparison analytics:</p>
+<ul style="text-align:left;max-width:300px;margin:0 auto;font-size:.85rem;list-style:none;display:flex;flex-direction:column;gap:6px">
+<li>Which features users compare most</li>
+<li>Price competitiveness analysis</li>
+<li>Rating trends vs competitors</li>
+<li>Category ranking history</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="panel" id="panel-advertise">
+<h2 class="panel-title">Advertise & Promote</h2>
+<p class="panel-sub">Get more visibility for your software listing</p>
+<div class="ad-card">
+<h4 style="margin-bottom:4px">Featured Listing</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Pin your software to the top of your category. $79/week.</p>
+<div class="form-grid">
+<div><label>Category</label>
+<select><option>Your Category</option></select></div>
+<div><label>Duration</label>
+<select><option value="1">1 Week - $79</option><option value="2">2 Weeks - $139</option><option value="4">4 Weeks - $249</option></select></div>
+<div class="full"><button class="auth-btn" onclick="toast('Feature coming soon! Email hello@editchoice.com')" style="width:100%">Boost Now</button></div>
+</div>
+</div>
+<div class="ad-card">
+<h4 style="margin-bottom:4px">Sponsored Comparison</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Appear as "Sponsored Alternative" in competitor comparison pages. $199/month.</p>
+<button class="auth-btn" onclick="toast('Feature coming soon! Email hello@editchoice.com')">Request Sponsored Spot</button>
+</div>
+<div class="ad-card">
+<h4 style="margin-bottom:4px">Banner Ad</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Display banner on category and comparison pages. $149/month. Included in Premium+.</p>
+<button class="auth-btn" onclick="toast('Upgrade to Premium or higher')" style="background:var(--border);color:var(--muted)">Upgrade to Unlock</button>
+</div>
+<div class="ad-card">
+<h4 style="margin-bottom:4px">Affiliate Program</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Earn 20% commission for every paid signup you refer to EditChoice. Share your link below.</p>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<input type="text" id="referralLink" value="https://editchoice.com/?ref=YOUR_CODE" readonly style="flex:1;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem;min-width:200px">
+<button class="copy-btn" onclick="copyRef()">Copy Link</button>
+</div>
+</div>
+</div>
+
+<div class="panel" id="panel-billing">
+<h2 class="panel-title">Billing & Plans</h2>
+<p class="panel-sub">Manage your subscription and payment method</p>
+<h3 style="margin-bottom:12px;font-size:1rem">Choose Your Plan</h3>
+<div class="plan-grid">
+<div class="plan-card current" onclick="selectPlan('free')">
+<div class="plan-name">Free</div>
+<div class="plan-price">$0</div>
+<div class="plan-feat">Basic listing</div>
+<div class="plan-feat">1 category</div>
+<div class="plan-feat">Community reviews</div>
+<button class="plan-btn">Current Plan</button>
+</div>
+<div class="plan-card" onclick="selectPlan('pro')">
+<div class="plan-name">Pro</div>
+<div class="plan-price">$79<sub>/mo</sub></div>
+<div class="plan-feat">Priority placement</div>
+<div class="plan-feat">Detailed analytics</div>
+<div class="plan-feat">Comparison insights</div>
+<button class="plan-btn">Upgrade</button>
+</div>
+<div class="plan-card" onclick="selectPlan('premium')">
+<div class="plan-name">Premium</div>
+<div class="plan-price">$199<sub>/mo</sub></div>
+<div class="plan-feat">Featured badge</div>
+<div class="plan-feat">Banner ad included</div>
+<div class="plan-feat">Monthly report</div>
+<button class="plan-btn">Upgrade</button>
+</div>
+<div class="plan-card" onclick="selectPlan('enterprise')">
+<div class="plan-name">Enterprise</div>
+<div class="plan-price">$499<sub>/mo</sub></div>
+<div class="plan-feat">Dedicated page</div>
+<div class="plan-feat">API access</div>
+<div class="plan-feat">Custom integrations</div>
+<button class="plan-btn">Upgrade</button>
+</div>
+</div>
+<div class="form-card" style="margin-top:20px">
+<h4 style="margin-bottom:12px">Payment Method</h4>
+<div class="form-grid">
+<div class="full"><label>Card Number</label><input type="text" placeholder="4242 4242 4242 4242" maxlength="19"></div>
+<div><label>Expiry</label><input type="text" placeholder="MM/YY" maxlength="5"></div>
+<div><label>CVC</label><input type="text" placeholder="123" maxlength="4"></div>
+<div class="full"><button class="auth-btn" onclick="toast('Payment processing coming soon!')" style="width:100%">Save Payment Method</button></div>
+</div>
+</div>
+</div>
+
+<div class="panel" id="panel-tools">
+<h2 class="panel-title">Business Tools</h2>
+<p class="panel-sub">Tools to help you price and position your software</p>
+<div class="ad-card">
+<h4>Pricing Strategy Calculator</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Find the optimal price point for your software</p>
+<div class="form-grid">
+<div><label>Competitor Avg Price</label><input type="number" id="toolCompPrice" value="29" onchange="calcPricing()"></div>
+<div><label>Your Feature Count</label><input type="number" id="toolFeatures" value="15" onchange="calcPricing()"></div>
+<div><label>Competitor Avg Features</label><input type="number" id="toolCompFeatures" value="12" onchange="calcPricing()"></div>
+<div><label>Target Market</label>
+<select id="toolMarket" onchange="calcPricing()"><option value="1">Consumer</option><option value="1.5">Prosumer</option><option value="2.5">Professional</option><option value="5">Enterprise</option></select></div>
+</div>
+<div id="pricingResult" style="margin-top:16px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:10px;padding:20px;text-align:center">
+<div style="font-size:2rem;font-weight:900;color:var(--accent)" id="suggestedPrice">$0/mo</div>
+<div style="color:var(--muted);font-size:.85rem;margin-top:4px" id="priceRange">Suggested price range</div>
+</div>
+</div>
+<div class="ad-card">
+<h4>ROI Calculator</h4>
+<p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Calculate return on your EditChoice listing investment</p>
+<div class="form-grid">
+<div><label>Monthly Plan Cost</label><input type="number" id="roiCost" value="79" onchange="calcROI()"></div>
+<div><label>Avg Customer Value</label><input type="number" id="roiLTV" value="200" onchange="calcROI()"></div>
+<div><label>Expected Monthly Signups</label><input type="number" id="roiSignups" value="5" onchange="calcROI()"></div>
+<div><label>Conversion Rate %</label><input type="number" id="roiConv" value="3" onchange="calcROI()"></div>
+</div>
+<div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
+<div class="stat-card" style="flex:1;min-width:120px"><div class="stat-label">Monthly Revenue</div><div class="stat-value" id="roiRevenue" style="font-size:1.2rem;color:var(--accent)">$0</div></div>
+<div class="stat-card" style="flex:1;min-width:120px"><div class="stat-label">ROI</div><div class="stat-value" id="roiPercent" style="font-size:1.2rem">0%</div></div>
+<div class="stat-card" style="flex:1;min-width:120px"><div class="stat-label">Net Profit</div><div class="stat-value" id="roiProfit" style="font-size:1.2rem">$0</div></div>
+</div>
+</div>
+<div class="ad-card">
+<h4>Quick Links & Resources</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+<a href="https://www.amazon.com/s?k=webcam+streaming&tag=spunk01-20" target="_blank" class="btn-sm" style="text-align:center;padding:10px;display:block">Webcams & Streaming</a>
+<a href="https://www.amazon.com/s?k=creative+software+books&tag=spunk01-20" target="_blank" class="btn-sm" style="text-align:center;padding:10px;display:block">Software Dev Books</a>
+<a href="/blog.html" class="btn-sm" style="text-align:center;padding:10px;display:block">EditChoice Blog</a>
+<a href="/ebook.html" class="btn-sm" style="text-align:center;padding:10px;display:block">Free Buyer's Guide</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+const DB='https://predict-network-ec767-default-rtdb.firebaseio.com/editchoice';
+let currentUser=null;
+
+function switchAuth(mode,e){
+document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+e.target.classList.add('active');
+document.getElementById('loginForm').style.display=mode==='login'?'flex':'none';
+document.getElementById('signupForm').style.display=mode==='signup'?'flex':'none';
+document.getElementById('authMsg').textContent='';
+}
+
+async function hashPass(p){const e=new TextEncoder().encode(p);const h=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+
+async function handleAuth(e,mode){
+e.preventDefault();
+const f=new FormData(e.target);
+const email=f.get('email');
+const pass=await hashPass(f.get('password'));
+const msg=document.getElementById('authMsg');
+if(mode==='signup'){
+const uid=email.replace(/[^a-zA-Z0-9]/g,'_');
+const data={business:f.get('business'),email,category:f.get('category'),website:f.get('website')||'',pass,plan:'free',created:new Date().toISOString()};
+try{
+await fetch(DB+'/users/'+uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+localStorage.setItem('ec_user',uid);
+currentUser={uid,...data};
+showDashboard();
+}catch(err){msg.textContent='Error creating account. Try again.';}
+}else{
+const uid=email.replace(/[^a-zA-Z0-9]/g,'_');
+try{
+const r=await fetch(DB+'/users/'+uid+'.json');
+const data=await r.json();
+if(!data){msg.textContent='Account not found.';return;}
+if(data.pass!==pass){msg.textContent='Incorrect password.';return;}
+localStorage.setItem('ec_user',uid);
+currentUser={uid,...data};
+showDashboard();
+}catch(err){msg.textContent='Error logging in. Try again.';}
+}
+}
+
+function showDashboard(){
+document.getElementById('authScreen').style.display='none';
+document.getElementById('dashboard').style.display='block';
+document.getElementById('userName').textContent=currentUser.business||'Software';
+document.getElementById('userPlan').textContent=(currentUser.plan||'free').toUpperCase();
+loadProfile();loadStats();calcPricing();calcROI();
+}
+
+function logout(){
+localStorage.removeItem('ec_user');
+currentUser=null;
+document.getElementById('authScreen').style.display='flex';
+document.getElementById('dashboard').style.display='none';
+}
+
+(async function(){
+const uid=localStorage.getItem('ec_user');
+if(uid){
+try{const r=await fetch(DB+'/users/'+uid+'.json');const data=await r.json();
+if(data){currentUser={uid,...data};showDashboard();}}catch(e){}
+}
+})();
+
+function showPanel(id,e){
+document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+document.getElementById('panel-'+id).classList.add('active');
+e.target.closest('.sidebar-link').classList.add('active');
+}
+
+function loadProfile(){
+if(!currentUser)return;
+document.getElementById('pBusiness').value=currentUser.business||'';
+document.getElementById('pEmail').value=currentUser.email||'';
+if(currentUser.website)document.getElementById('pWebsite').value=currentUser.website;
+if(currentUser.desc)document.getElementById('pDesc').value=currentUser.desc;
+if(currentUser.company)document.getElementById('pCompany').value=currentUser.company;
+updateProfileBar();
+}
+
+function saveProfile(){
+if(!currentUser)return;
+const d={business:document.getElementById('pBusiness').value,company:document.getElementById('pCompany').value,
+email:document.getElementById('pEmail').value,website:document.getElementById('pWebsite').value,
+pricing:document.getElementById('pPricing').value,price:document.getElementById('pPrice').value,
+features:document.getElementById('pFeatures').value,demo:document.getElementById('pDemo').value,
+screenshots:document.getElementById('pScreenshots').value,desc:document.getElementById('pDesc').value,
+sysreq:document.getElementById('pSysReq').value,year:document.getElementById('pYear').value};
+const platforms=[];
+document.querySelectorAll('#platformChecks input:checked').forEach(c=>platforms.push(c.value));
+d.platforms=platforms;
+Object.assign(currentUser,d);
+fetch(DB+'/users/'+currentUser.uid+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+toast('Profile saved!');
+updateProfileBar();
+document.getElementById('userName').textContent=d.business;
+}
+
+function updateProfileBar(){
+let filled=0;const fields=['business','email','website','desc','company','price'];
+fields.forEach(f=>{if(currentUser[f])filled++});
+const pct=Math.round((filled/fields.length)*100);
+document.getElementById('profileBar').style.width=pct+'%';
+}
+
+function loadStats(){
+document.getElementById('statViews').textContent=Math.floor(Math.random()*200)+50;
+document.getElementById('statClicks').textContent=Math.floor(Math.random()*30)+5;
+document.getElementById('statRank').textContent='#'+Math.floor(Math.random()*15+1);
+}
+
+function calcPricing(){
+const compPrice=parseFloat(document.getElementById('toolCompPrice').value)||29;
+const features=parseInt(document.getElementById('toolFeatures').value)||15;
+const compFeatures=parseInt(document.getElementById('toolCompFeatures').value)||12;
+const marketMult=parseFloat(document.getElementById('toolMarket').value)||1;
+const featureRatio=features/Math.max(compFeatures,1);
+const base=compPrice*featureRatio*marketMult;
+const low=Math.round(base*0.8);
+const high=Math.round(base*1.3);
+const mid=Math.round(base);
+document.getElementById('suggestedPrice').textContent='$'+mid+'/mo';
+document.getElementById('priceRange').textContent='Range: $'+low+' - $'+high+'/mo';
+}
+
+function calcROI(){
+const cost=parseFloat(document.getElementById('roiCost').value)||79;
+const ltv=parseFloat(document.getElementById('roiLTV').value)||200;
+const signups=parseInt(document.getElementById('roiSignups').value)||5;
+const conv=parseFloat(document.getElementById('roiConv').value)||3;
+const customers=Math.round(signups*(conv/100)*10)/10;
+const revenue=Math.round(customers*ltv);
+const profit=revenue-cost;
+const roi=cost>0?Math.round((profit/cost)*100):0;
+document.getElementById('roiRevenue').textContent='$'+revenue.toLocaleString();
+document.getElementById('roiProfit').textContent='$'+profit.toLocaleString();
+document.getElementById('roiProfit').style.color=profit>=0?'var(--accent)':'var(--red)';
+document.getElementById('roiPercent').textContent=roi+'%';
+document.getElementById('roiPercent').style.color=roi>=0?'var(--accent)':'var(--red)';
+}
+
+function copyRef(){navigator.clipboard.writeText(document.getElementById('referralLink').value).then(()=>toast('Referral link copied!'))}
+function requestReview(){
+const name=document.getElementById('revName').value;
+const email=document.getElementById('revEmail').value;
+if(!name||!email){toast('Please fill in name and email');return;}
+toast('Review request sent to '+name+'!');
+document.getElementById('revName').value='';document.getElementById('revEmail').value='';
+}
+function selectPlan(plan){toast('Plan upgrade coming soon! Email hello@editchoice.com to upgrade to '+plan.toUpperCase())}
+function toast(msg){const t=document.getElementById('toastEl');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+</script>
+</body>
+</html>
