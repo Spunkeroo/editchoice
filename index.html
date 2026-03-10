@@ -116,7 +116,7 @@ footer a:hover{color:#34d399}
 </head>
 <body>
 
-<header><div class="container"><a href="/" class="logo">EditChoice</a><nav><a href="#ai">AI Tools</a><a href="#vpn">VPNs</a><a href="#design">Design</a><a href="#all">All Reviews</a></nav></div></header>
+<header><div class="container"><a href="/" class="logo">EditChoice</a><nav><a href="#all" onclick="filterByCat('AI');return false;">AI Tools</a><a href="#all" onclick="filterByCat('VPN');return false;">VPNs</a><a href="#all" onclick="filterByCat('Design');return false;">Design</a><a href="#all" onclick="filterByCat('');return false;">All Reviews</a></nav></div></header>
 
 <div class="hero"><div class="container">
 <h1>Find the Best Software for You</h1>
@@ -164,7 +164,7 @@ footer a:hover{color:#34d399}
 
 </div>
 
-<footer><div class="container"><p>&copy; 2026 EditChoice — A <a href="https://spunk.codes">SPUNK LLC</a> project</p><p style="margin-top:8px"><a href="https://earnbuild.com">EarnBuild</a> <a href="https://coincould.com">CoinCould</a> <a href="https://musichog.com">MusicHog</a> <a href="https://spunk.codes">Spunk.Codes</a></p></div></footer>
+<footer><div class="container"><p>&copy; 2026 EditChoice — A <a href="https://spunk.codes">SPUNK LLC</a> project</p><p style="margin-top:8px"><a href="https://spunk.codes">Spunk.Codes</a> <a href="https://spunk.bet">Spunk.Bet</a> <a href="https://spunkart.com">SpunkArt</a> <a href="https://ordinals.pics">Ordinals.Pics</a></p></div></footer>
 
 <script>
 // Floating particles
@@ -173,12 +173,12 @@ footer a:hover{color:#34d399}
 var tools=[
 {name:'Claude',cat:'AI',rating:4.9,price:'Free / $20/mo Pro',desc:'Most capable AI for coding, analysis, and long-form content. 200K context window.',pros:['Best for coding','Huge context','Safety-focused'],cons:['Pro plan required for heavy use','Newer ecosystem'],link:'https://claude.ai'},
 {name:'ChatGPT',cat:'AI',rating:4.7,price:'Free / $20/mo Plus',desc:'Most popular AI assistant. Great for conversation, writing, and general tasks.',pros:['Most versatile','Huge plugin ecosystem','GPT-4 vision'],cons:['Rate limits on free tier','Can hallucinate'],link:'https://chat.openai.com'},
-{name:'Midjourney',cat:'AI',rating:4.8,price:'$10-$60/mo',desc:'Best AI image generator. Photorealistic quality, artistic styles.',pros:['Best image quality','Fast generation','Active community'],cons:['Discord-only interface','No free tier'],link:'https://midjourney.com'},
+{name:'Midjourney',cat:'AI',rating:4.8,price:'$10-$60/mo',desc:'Best AI image generator. Photorealistic quality, artistic styles.',pros:['Best image quality','Fast generation','Active community'],cons:['Discord-only interface','No free tier'],link:'https://spunk.codes/ai-image-prompt.html'},
 {name:'Jasper',cat:'AI',rating:4.3,price:'$49/mo+',desc:'AI writing tool built for marketing teams. Templates, brand voice, campaigns.',pros:['Marketing-focused','Brand voice','Team features'],cons:['Expensive','Overkill for individuals'],link:'https://jasper.ai'},
-{name:'NordVPN',cat:'VPN',rating:4.8,price:'$3.09/mo (2yr)',desc:'Best overall VPN. Fast speeds, 6,300+ servers, strict no-logs policy.',pros:['Fast speeds','No-logs audited','6,300+ servers'],cons:['Monthly plan expensive','Occasional slow servers'],link:'https://nordvpn.com'},
+{name:'NordVPN',cat:'VPN',rating:4.8,price:'$3.09/mo (2yr)',desc:'Best overall VPN. Fast speeds, 6,300+ servers, strict no-logs policy.',pros:['Fast speeds','No-logs audited','6,300+ servers'],cons:['Monthly plan expensive','Occasional slow servers'],link:'https://spunk.codes/blog/best-free-vpn-services-2026.html'},
 {name:'ExpressVPN',cat:'VPN',rating:4.6,price:'$6.67/mo (1yr)',desc:'Fastest VPN with servers in 105 countries. Premium privacy protection.',pros:['Fastest speeds','105 countries','Easy to use'],cons:['Most expensive','Only 8 devices'],link:'https://expressvpn.com'},
 {name:'Surfshark',cat:'VPN',rating:4.5,price:'$2.29/mo (2yr)',desc:'Budget VPN with unlimited devices. Great value for families and small teams.',pros:['Unlimited devices','Cheapest option','CleanWeb ad blocker'],cons:['Slower than NordVPN','Smaller network'],link:'https://surfshark.com'},
-{name:'Canva Pro',cat:'Design',rating:4.7,price:'Free / $13/mo Pro',desc:'Design anything. Templates, AI tools, brand kit. Perfect for non-designers.',pros:['Easy to use','100M+ templates','AI features'],cons:['Limited for complex design','Export quality'],link:'https://canva.com'},
+{name:'Canva Pro',cat:'Design',rating:4.7,price:'Free / $13/mo Pro',desc:'Design anything. Templates, AI tools, brand kit. Perfect for non-designers.',pros:['Easy to use','100M+ templates','AI features'],cons:['Limited for complex design','Export quality'],link:'https://spunk.codes/blog/best-free-graphic-design-tools-for-non-designers-2026.html'},
 {name:'Figma',cat:'Design',rating:4.8,price:'Free / $15/mo Pro',desc:'Professional UI/UX design and prototyping. Real-time team collaboration.',pros:['Real-time collab','Dev handoff','Plugins'],cons:['Learning curve','Heavy on resources'],link:'https://figma.com'},
 {name:'Adobe Creative Cloud',cat:'Design',rating:4.5,price:'$55/mo all apps',desc:'Industry standard for photo, video, and graphic design. Photoshop, Illustrator, Premiere.',pros:['Industry standard','Full suite','AI features'],cons:['Expensive','Subscription only'],link:'https://adobe.com'},
 {name:'Notion',cat:'PM',rating:4.7,price:'Free / $10/mo Plus',desc:'All-in-one workspace for notes, docs, projects, wikis, and databases.',pros:['Incredibly flexible','Free tier generous','AI built-in'],cons:['Can be overwhelming','Slow on large databases'],link:'https://notion.so'},
